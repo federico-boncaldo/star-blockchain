@@ -1,11 +1,11 @@
 /**
  *                          Block class
- *  The Block class is a main component into any Blockchain platform, 
+ *  The Block class is a main component into any Blockchain platform,
  *  it will store the data and act as a dataset for your application.
  *  The class will expose a method to validate the data... The body of
  *  the block will contain an Object that contain the data to be stored,
  *  the data should be stored encoded.
- *  All the exposed methods should return a Promise to allow all the methods 
+ *  All the exposed methods should return a Promise to allow all the methods
  *  run asynchronous.
  */
 
@@ -22,7 +22,7 @@ class Block {
 		this.time = 0;                                              // Timestamp for the Block creation
 		this.previousBlockHash = null;                              // Reference to the previous Block Hash
     }
-    
+
     /**
      *  validate() method will validate if the block has been tampered or not.
      *  Been tampered means that someone from outside the application tried to change
@@ -38,14 +38,14 @@ class Block {
     validate() {
         let self = this;
         return new Promise((resolve, reject) => {
-            // Save in auxiliary variable the current block hash
-                                            
-            // Recalculate the hash of the Block
-            // Comparing if the hashes changed
-            // Returning the Block is not valid
-            
-            // Returning the Block is valid
+            const storedHash = self.hash;
+            const hash = SHA256(JSON.stringify(self));
 
+            if (storedHash === hash){
+                resolve(true);
+            }else{
+                reject(false);
+            }
         });
     }
 
