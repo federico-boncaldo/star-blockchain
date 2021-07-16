@@ -72,6 +72,9 @@ class Blockchain {
            block.hash = SHA256(JSON.stringify(block)).toString();
            self.chain.push(block);
            self.height++;
+           if(self.height + 1 !== self.chain.length){
+               reject('The chain hasn\'t been updated correcty');
+           }
            resolve(block)
         });
     }
