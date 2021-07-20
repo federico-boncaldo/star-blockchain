@@ -113,7 +113,21 @@ class Blockchain {
     submitStar(address, message, signature, star) {
         let self = this;
         return new Promise(async (resolve, reject) => {
-
+            let time = parseInt(message.split(':')[1]);
+            let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
+            let timeElapsed = (time - currentTime) / 60;
+            if(timeElapsed > 5){
+                reject('The time between the request and the submission is greater than 5 minutes')
+            }
+            if(bitcoinMessage.verify(message, address, signature)){
+                new BlockClass.Block({
+                    data: star
+                });
+                self._addBlock(block)
+                resolve(block)
+            }else{
+                reject('Message not verified');
+            }
         });
     }
 
