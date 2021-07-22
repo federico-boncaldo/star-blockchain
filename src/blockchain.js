@@ -119,9 +119,13 @@ class Blockchain {
             if(timeElapsed > 5){
                 reject('The time between the request and the submission is greater than 5 minutes')
             }
-            if(bitcoinMessage.verify(message, address, signature)){
+            let ownershipAddress = message.split(':')[0];
+            if (ownershipAddress === address && bitcoinMessage.verify(message, address, signature)){
                 new BlockClass.Block({
-                    data: star
+                    data: {
+                        star: star,
+                        address: address
+                    }
                 });
                 self._addBlock(block)
                 resolve(block)
