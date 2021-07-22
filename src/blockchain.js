@@ -117,14 +117,14 @@ class Blockchain {
             let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
             let timeElapsed = (time - currentTime) / 60;
             if(timeElapsed > 5){
-                reject('The time between the request and the submission is greater than 5 minutes')
+                reject('The time between request and submission is greater than 5 minutes')
             }
             let ownershipAddress = message.split(':')[0];
             if (ownershipAddress === address && bitcoinMessage.verify(message, address, signature)){
                 new BlockClass.Block({
                     data: {
                         star: star,
-                        address: address
+                        walletAddress: address
                     }
                 });
                 self._addBlock(block)
@@ -168,7 +168,7 @@ class Blockchain {
             if(block){
                 resolve(block);
             } else {
-                resolve(null);
+                reject(null);
             }
         });
     }
@@ -183,7 +183,17 @@ class Blockchain {
         let self = this;
         let stars = [];
         return new Promise((resolve, reject) => {
+            let blocks = self.chain.filter(block => {
+                let data = block.getBData();
+                return data.walletAddress === address;
+            });
 
+            stars = blocks.map(block => {
+                let data = block.getBData();
+                return data.star;
+            });
+
+            resolve(stars);
         });
     }
 
