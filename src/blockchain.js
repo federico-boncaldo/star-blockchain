@@ -207,7 +207,17 @@ class Blockchain {
         let self = this;
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
-
+            self.chain.forEach(block => {
+                try{
+                    let valid = await block.validate();
+                    if (!(valid && block.previousBlockHash == self.chain[block.height - 1].hash)){
+                        errorLog.push(`Error with block ${JSON.stringify(block)}`);
+                    }
+                }catch(error){
+                    errorLog.push(`Error with block ${JSON.stringify(block)}`);
+                }
+                resolve(errorLog)
+            })
         });
     }
 
