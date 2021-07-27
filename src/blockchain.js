@@ -208,15 +208,19 @@ class Blockchain {
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
             self.chain.forEach(block => {
-                try{
-                    let valid = await block.validate();
-                    if (!(valid && block.previousBlockHash == self.chain[block.height - 1].hash)){
-                        errorLog.push(`Error with block ${JSON.stringify(block)}`);
-                    }
-                }catch(error){
-                    errorLog.push(`Error with block ${JSON.stringify(block)}`);
+                if (block.previousBlockHash !== self.chain[block.height - 1].hash){
+                    errorLog.push(`Incorrect previous block hash for block: ${JSON.stringify(block)}`);
                 }
-                resolve(errorLog)
+                try{
+                    await block.validate();
+                }catch(error){
+                    errorLog.push(`Incorrect block hash for block: ${JSON.stringify(block)}`);
+                }
+                if (errorLog.length >= 0) {
+                    reject(errorLog);
+                }else{
+                    resolve('The chain is valid');
+                }
             })
         });
     }
