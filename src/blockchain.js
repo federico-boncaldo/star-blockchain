@@ -121,7 +121,7 @@ class Blockchain {
             }
             let ownershipAddress = message.split(':')[0];
             if (ownershipAddress === address && bitcoinMessage.verify(message, address, signature)){
-                new BlockClass.Block({
+                let block = new BlockClass.Block({
                     data: {
                         star: star,
                         walletAddress: address
@@ -207,7 +207,7 @@ class Blockchain {
         let self = this;
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
-            self.chain.forEach(block => {
+            self.chain.forEach(async block => {
                 if (block.previousBlockHash !== self.chain[block.height - 1].hash){
                     errorLog.push(`Incorrect previous block hash for block: ${JSON.stringify(block)}`);
                 }
