@@ -63,7 +63,7 @@ class Block {
         const decodedBody = hex2ascii(body);
         let data = JSON.parse(decodedBody);
 
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             if (data !== 'Genesis Block'){
                 resolve(data);
             }
