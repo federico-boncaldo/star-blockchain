@@ -115,17 +115,15 @@ class Blockchain {
         return new Promise(async (resolve, reject) => {
             let time = parseInt(message.split(':')[1]);
             let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
-            let timeElapsed = (time - currentTime) / 60;
+            let timeElapsed = (currentTime - time) / 60;
             if(timeElapsed > 5){
                 reject('The time between request and submission is greater than 5 minutes')
             }
             let ownershipAddress = message.split(':')[0];
             if (ownershipAddress === address && bitcoinMessage.verify(message, address, signature)){
                 let block = new BlockClass.Block({
-                    data: {
-                        star: star,
-                        walletAddress: address
-                    }
+                    owner: address,
+                    star: star
                 });
                 self._addBlock(block)
                 resolve(block)
