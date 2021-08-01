@@ -17,7 +17,7 @@ class Block {
   constructor(data) {
     this.hash = null; // Hash of the block
     this.height = 0; // Block Height (consecutive number of each block)
-    this.body = Buffer(JSON.stringify(data)).toString('hex'); // Will contain the transactions stored in the block, by default it will encode the data
+    this.body = Buffer.from(JSON.stringify(data)).toString('hex'); // Will contain the transactions stored in the block, by default it will encode the data
     this.time = 0; // Timestamp for the Block creation
     this.previousBlockHash = null; // Reference to the previous Block Hash
   }
@@ -38,8 +38,13 @@ class Block {
     let self = this;
     return new Promise((resolve, reject) => {
       const storedHash = self.hash;
-      const hash = SHA256(JSON.stringify(self));
-
+      const blockData = {
+        height: this.height,
+        body: this.body,
+        time: this.time,
+        previousBlockHash: this.previousBlockHash,
+      };
+      const hash = SHA256(JSON.stringify(blockData)).toString();
       if (storedHash === hash) {
         resolve(true);
       } else {
