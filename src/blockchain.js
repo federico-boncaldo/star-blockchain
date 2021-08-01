@@ -80,7 +80,13 @@ class Blockchain {
       if (self.height + 1 !== self.chain.length) {
         reject("The chain hasn't been updated correcty");
       }
-      resolve(block);
+      this.validateChain()
+        .then(() => {
+          resolve(block);
+        })
+        .catch((errors) => {
+          reject(errors);
+        });
     });
   }
 
@@ -208,26 +214,28 @@ class Blockchain {
   validateChain() {
     let self = this;
     let errorLog = [];
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       self.chain.forEach(async (block) => {
-        if (block.previousBlockHash !== self.chain[block.height - 1].hash) {
-          errorLog.push(
-            `Incorrect previous block hash for block: ${JSON.stringify(block)}`
-          );
-        }
         try {
           await block.validate();
+          if (
+            block.height !== 0 &&
+            block.previousBlockHash !== self.chain[block.height - 1].hash
+          ) {
+            errorLog.push({
+              message: 'Incorrect previous block hash for block',
+              block: block,
+            });
+          }
         } catch (error) {
-          errorLog.push(
-            `Incorrect block hash for block: ${JSON.stringify(block)}`
-          );
-        }
-        if (errorLog.length >= 0) {
-          reject(errorLog);
-        } else {
-          resolve('The chain is valid');
+          errorLog.push({
+            message: 'Incorrect block hash for block',
+            block: block,
+          });
         }
       });
+
+      resolve(errorLog);
     });
   }
 }
